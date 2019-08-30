@@ -3,7 +3,7 @@
 >
 >工欲善其事,必先利其器.
 >
->为了更好的开发Flutter应用, 本文将系统的学习一下Dart基础
+>为了更好的开发Flutter应用, 我们先来熟悉一下Dart的基本语法
 
 ### Hello, world!
 学习任何一门编程语言时, 基本上都是输出一个Hello, world!
@@ -22,18 +22,21 @@ void main(){
 Dart中所有东西都是对象, 包括数字、函数等<br>
 它们都继承自Object, 并且默认值都是null(包括数字)因此数字、字符串都可以调用各种方法
 
-Dart中支持以下数据类型:
+Dart中支持以下内建类型:
 
-- num
 - String
-- bool
-- List(也就是数组)
+- Number
+- Boolean
+- List
+- Set
 - Map
+- Rune
+- Symbol
 
 Drat语言本质上是动态类型语言, 类型是可选的, 可以使用var声明变量, 也可以使用类型来声明变量
 
-#### 1. String(字符串类型)
-字符串赋值的时候, 可以使用单引号, 也可以使用双引号
+#### 1. String
+Dart字符串是一组UTF-16单元序列. 字符串赋值的时候, 可以使用单引号, 也可以使用双引号
 ```
 var str1 = "MuFeng";
 String str2 = 'MuFeng';
@@ -74,47 +77,176 @@ print("My name is $name");
 ```
 print(r"换行符: \n");
 ```
-#### 2. num(数字类型)
-Dart中数值是num, 它有两个子类型: int和double, int是任意长度的整数, double是双精度浮点数
+#### 2. Number
+Dart中的Number有两种类型:
+
+**int**<br>
+整数值不大于64位, 具体取决于平台. 在Dart VM上, 值的范围从-2<sup>63</sup> 到2<sup>63</sup>-1. Dart被编译为JavaScript时, 值的范围从-2<sup>53</sup> 到2<sup>53</sup>-1
+
+**double**<br>
+64位双精度浮点数
+
+字符串与数字的转换方法:
 ```
+//String->int
+var a = int.parse('1);
+//String->double
+var a = double.parse(1.1);
+//int->String
+var a = 1.toString();
+//double->String 并支持设置保留几位小数点
+var a = 1.23456.toStringAsFixed(2)//==1.23
+
 var h = 59506490075;
 //进制转换方法
 print("整型转换为16进制: $h -> 0x${h.toRadixString(16).toUpperCase()}");
 ```
-#### 3. bool(布尔类型)
-和其他语言一样, 布尔类型只有两种结果"true"和"false"
+#### 3. Boolean
+Dart使用bool类型表示布尔值. 
 ```
 var isShow = true;
 bool isHide = false;
 ```
 
-#### 4. const 和 final
-在声明变量的时候, 除了var, 还可以使用const和final, 同时,在使用const和final的时候, 可以省略var或者其他类型
+#### 4. List
+列表, 也叫数组, 常见的添加、索引、删除等方法
 ```
-var n = 100;
-const n = 100;
-final n = 100;
+//使用List的构造函数, 也可以添加int参数, 标识list固定长度
+  var list = List();
+  var list1 = List(10);
 
-int m = 100;
-const int m = 100;
-final int m = 100;
-```
-const和final定义的都是常量, 值不能改变, 并且在声明的时候就必须初始化, 区别是:
+  //使用简单的List来赋值
+  var list2 = ['a','b',1];
 
-- const定义的是编译时常量, 只能用编译时常量来初始化
-- final定义的常量可以用变量来初始化
+  //添加元素
+  list.add(2);
 
+  //添加多个元素
+  list.addAll(list2);
+
+  //获取List的长度
+  print(list.length);
+
+  //利用索引获取元素
+  print(list[0]);
+
+  //查找某个元素的索引号
+  print(list.indexOf('b'));
+
+  //利用索引号删除某个元素
+  var index = list.indexOf(1);
+  list.removeAt(index);
+  print(list);
+
+  //删除所有元素
+  list.clear();
+  print(list.length);
 ```
-final name = Name(); //OK
-const name = Name(); //会报错
+使用sort()对List的元素进行排序<br>
+并且必须制定比较两个对象的函数, 函数的返回值中<br>
+return < 0 表示小于, =0表示相同, >0表示大于<br>
 ```
-var、final等在左边定义变量的时候, 并不关心右边是不是常量, 但是如果右边用了const, 那么不管左边如何, 右边都必须是常量
+var list3 = ['c','a','r','y'];
+  list3.sort((a,b)=>a.compareTo(b));
+  print(list3);
 ```
-const list = const[1,2,3];//Ok
-const list = [1,2,3];//Ok
-final list = [1,2,3];//Ok
-final list = const[1,2,3];//Ok
-final list = const[Name(),2,3];//Error,const右边必须是常量
+List以及其他的容器可以指定参数类型
+```
+var list = List<String>();
+list.add("a");
+list.add(5);//报错, 指定参数类型后, 类型必须统一
+```
+#### 5. Set
+集合在Dart中无序的, 并且每个元素具有唯一性, 因为它是无序的, 因此不能像List那样用索引来访问元素
+```
+void main(){
+  var set = Set();
+
+  set.addAll(['name', 'sex', 'age']);
+  print(set.length);
+
+  //添加已有的元素无效
+  set.add("name");
+  print(set.length);
+
+  //删除元素
+  set.remove("sex");
+  print(set);
+
+  //检查Set中是否包含某个元素
+  print(set.contains("name"));
+
+  //检查在Set中是否包含多个元素
+  print(set.containsAll(["name","age"]));
+  set.addAll(['name', 'sex', 'age']);
+
+  //获取两个集合的交集
+  var set1 = Set.from(['name','MuFeng']);
+  var set2 = set.intersection(set1);
+  print("set2 = $set2");
+
+}
+```
+
+#### 6. Map
+映射, 也称之为字典, Map是一个无序的键值对容器
+```
+void main(){
+  //Map的声明
+  var map = {
+    "name": "MuFeng",
+    "age": 25,
+    "la": ["Android", 'Java','Kotlin','Flutter']
+  };
+  var map1 = Map();
+
+  //指定键值对的参数类型
+  var map2 = Map<String, Object>();
+
+  //Map的赋值, 中括号中是Key, 这里不是数组
+  map["sex"] = "男";
+
+  //Map中的键值对是唯一的
+  //同Set不同, 第二次输入的Key如果存在, Value会覆盖之前的数据
+  map["age"] = 30;
+  print(map);
+
+  //检索Map是否包含有某Key
+  print(map.containsKey("age"));
+
+  //删除某个键值对
+  map.remove("sex");
+  print(map);
+}
+```
+可以使用getKeys和getValues获取所有Key或者所有Values的迭代器
+```
+ var keys = map.keys;
+  print(keys);
+
+  var values = map.values;
+  print(values);
+
+  //迭代器中有一个函数any, 用来检测迭代器中的数据
+  //当其中一个元素运行函数时return true, 那么any的返回值就是true, 否则为false
+  //与之相对的是函数every, 要所有函数运行return true, 那么every返回true
+  print(values.any((v) => v == 'MuFeng'));
+  print(values.every((v) => v == 'MuFeng'));
+
+  //可以使用forEach来遍历数据, 但它是无序的
+  map.forEach((k,v){
+    print("$k and $v");
+  });
+
+  //检索是否包含某个key或value
+  print(map.containsKey("name"));
+  print(map.containsValue("MuFeng"));
+
+  //V putIfAbsent(K key, Function V ifAbsent())函数, 通过key来查找Value
+  //当某个Key不存在的时候, 会执行第二参数的Function来添加Value
+  var map3 = {};
+  map3.putIfAbsent("name", ()=>'MuFeng');
+  print(map3);
 ```
 
 ### 函数
@@ -250,8 +382,7 @@ void main(){
   }
 }
 ```
-在checked模式下, 如果是非bool值会抛出异常<br>
-而在production模式下, 非bool值会被翻译成false
+Dart的判断条件必须是布尔值, 不能是其他类型
 
 #### 4. 循环
 ```
@@ -455,157 +586,58 @@ void main(){
   ..log("EditText Edit");
 }
 ```
-### StringBuffer, List, Set, Map
-#### 1. StringBuffer
-StringBuffer可以特别高效的构建多个字符串
+
+### 异步支持
+Dart中包含许多返回Future或Stream对象的函数. 这些函数在设置完耗时任务(I/O操作)后, 就立即返回了, 不会等待耗时任务完成.
+使用async和await关键字实现异步编程.
+
+#### 1. 处理Future
+可以通过下面两种方式, 获得Future执行完成的结果:
+- 使用async和await
+- 使用Future API
+
+使用async和await关键字的代码是异步的. 虽然看起来有点像同步代码
 ```
-void main(){
-  StringBuffer sb = StringBuffer();
-  sb..write("Use a StringBuffer")
-  ..writeAll(['name', 'sex', 'age'])
-  ..write("My name is")
-  ..write("MuFeng");
-  print(sb.toString());
-  sb.clear();
+await lookUpVersion();
+```
+要使用await, 代码必须在异步函数(使用async标记函数)中:
+```
+Future checkVersion() async{
+    var version = await lookUpVersion();
 }
 ```
-#### 2. List
-列表, 也叫数组, 常见的添加、索引、删除等方法
+> 提示: 虽然一步函数可能会执行耗时的操作, 但它不会等待这些操作. 相反, 异步函数只有在遇到第一个await表达式时才会执行.
+
+使用try, catch, 和finally来处理代码中使用await导致的错误
 ```
-//使用List的构造函数, 也可以添加int参数, 标识list固定长度
-  var list = List();
-  var list1 = List(10);
-
-  //使用简单的List来赋值
-  var list2 = ['a','b',1];
-
-  //添加元素
-  list.add(2);
-
-  //添加多个元素
-  list.addAll(list2);
-
-  //获取List的长度
-  print(list.length);
-
-  //利用索引获取元素
-  print(list[0]);
-
-  //查找某个元素的索引号
-  print(list.indexOf('b'));
-
-  //利用索引号删除某个元素
-  var index = list.indexOf(1);
-  list.removeAt(index);
-  print(list);
-
-  //删除所有元素
-  list.clear();
-  print(list.length);
-```
-使用sort()对List的元素进行排序<br>
-并且必须制定比较两个对象的函数, 函数的返回值中<br>
-return < 0 表示小于, =0表示相同, >0表示大于<br>
-```
-var list3 = ['c','a','r','y'];
-  list3.sort((a,b)=>a.compareTo(b));
-  print(list3);
-```
-List以及其他的容器可以指定参数类型
-```
-var list = List<String>();
-list.add("a");
-list.add(5);//报错, 指定参数类型后, 类型必须统一
-```
-#### 3. Set
-集合在Dart中无序的, 并且每个元素具有唯一性, 因为它是无序的, 因此不能像List那样用索引来访问元素
-```
-void main(){
-  var set = Set();
-
-  set.addAll(['name', 'sex', 'age']);
-  print(set.length);
-
-  //添加已有的元素无效
-  set.add("name");
-  print(set.length);
-
-  //删除元素
-  set.remove("sex");
-  print(set);
-
-  //检查Set中是否包含某个元素
-  print(set.contains("name"));
-
-  //检查在Set中是否包含多个元素
-  print(set.containsAll(["name","age"]));
-  set.addAll(['name', 'sex', 'age']);
-
-  //获取两个集合的交集
-  var set1 = Set.from(['name','MuFeng']);
-  var set2 = set.intersection(set1);
-  print("set2 = $set2");
-
+try{
+  version = await lookUpVersion();
+}catch(e){
 }
 ```
-
-#### 4. Map
-映射, 也称之为字典, Map是一个无序的键值对容器
+在一个异步函数中可以多次使用await. 
 ```
-void main(){
-  //Map的声明
-  var map = {
-    "name": "MuFeng",
-    "age": 25,
-    "la": ["Android", 'Java','Kotlin','Flutter']
-  };
-  var map1 = Map();
-
-  //指定键值对的参数类型
-  var map2 = Map<String, Object>();
-
-  //Map的赋值, 中括号中是Key, 这里不是数组
-  map["sex"] = "男";
-
-  //Map中的键值对是唯一的
-  //同Set不同, 第二次输入的Key如果存在, Value会覆盖之前的数据
-  map["age"] = 30;
-  print(map);
-
-  //检索Map是否包含有某Key
-  print(map.containsKey("age"));
-
-  //删除某个键值对
-  map.remove("sex");
-  print(map);
-}
+var entrypoint = await findEntrypoint();
+var exitCode = await runExecutable(entrypoint, args);
+await flushThenExit(exitCode);
 ```
-可以使用getKeys和getValues获取所有Key或者所有Values的迭代器
+在await表达式中, 表达式的值通常是一个Future对象; 如果不是, 这时表达式的值会被自动包装成一个Future对象.
+await表达式执行的结果为这个返回的对象. await表达式会阻塞代码的执行, 知道需要的对象返回为止
+#### 2. 处理Stream
+当需要从Stream中获取数据值时, 可以通过以下两种方式:
+- 使用async和一个异步循环(await for)
+- 使用Stream API
+
+> 提示: 在使用await for前, 确保代码清晰, 并且确实希望等待所有流的结果. 例如, 通常不应该使用await for的UI事件监听器, 因为UI框架会发送无穷无尽的事件流
+
+以下是异步for循环的使用形式:
 ```
- var keys = map.keys;
-  print(keys);
-
-  var values = map.values;
-  print(values);
-
-  //迭代器中有一个函数any, 用来检测迭代器中的数据
-  //当其中一个元素运行函数时return true, 那么any的返回值就是true, 否则为false
-  //与之相对的是函数every, 要所有函数运行return true, 那么every返回true
-  print(values.any((v) => v == 'MuFeng'));
-  print(values.every((v) => v == 'MuFeng'));
-
-  //可以使用forEach来遍历数据, 但它是无序的
-  map.forEach((k,v){
-    print("$k and $v");
-  });
-
-  //检索是否包含某个key或value
-  print(map.containsKey("name"));
-  print(map.containsValue("MuFeng"));
-
-  //V putIfAbsent(K key, Function V ifAbsent())函数, 通过key来查找Value
-  //当某个Key不存在的时候, 会执行第二参数的Function来添加Value
-  var map3 = {};
-  map3.putIfAbsent("name", ()=>'MuFeng');
-  print(map3);
+await for(varOrType indentifier in expression){}
 ```
+上面表达式返回的值必须是Stream类型. 执行流程如下:
+- 等待, 知道流发出一个值
+- 执行for循环体, 将变量设置为该发出的值
+- 重复1和2, 直到关闭流
+
+使用break 或者 return语句可以停止接收stream的数据, 这样就跳出了for循环, 并且从stream上取消注册. 
+如果在实现异步for循环时遇到编译错误,请检查确保 await for 处于异步函数中。
