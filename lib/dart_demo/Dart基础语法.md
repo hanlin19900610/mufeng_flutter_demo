@@ -641,3 +641,6 @@ await for(varOrType indentifier in expression){}
 
 使用break 或者 return语句可以停止接收stream的数据, 这样就跳出了for循环, 并且从stream上取消注册. 
 如果在实现异步for循环时遇到编译错误,请检查确保 await for 处于异步函数中。
+
+### 总结
+本文概述了Dart语言中常用的功能. 熟悉是第一步, 接下来还需要在Flutter中实际运用, 边写边学接收的才会更快
